@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"test/fetch"
+	"test/github"
 )
 
 func main() {
@@ -13,12 +14,25 @@ func main() {
 		}
 	*/
 
-	ch := make(chan string)
-	for _, url := range os.Args[1:] {
-		go fetch.Fetch2(url, ch)
+	/*
+		ch := make(chan string)
+		for _, url := range os.Args[1:] {
+			go fetch.Fetch2(url, ch)
+		}
+
+		for range os.Args[1:] {
+			fmt.Println(<-ch)
+		}
+	*/
+
+	result, err := github.SearchIssues(os.Args[1:])
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	for range os.Args[1:] {
-		fmt.Println(<-ch)
+	fmt.Printf("%d issues:\n", result.TotalCount)
+	for _, item := range result.Items {
+		fmt.Printf("#%-5d %9.9s %.55s\n",
+			item.Number, item.User.Login, item.Title)
 	}
 }
