@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"sync"
 	"test/comic"
 )
 
@@ -41,18 +42,26 @@ func main() {
 	*/
 	const rawurl string = "xkcd.com"
 	client := comic.NewCrawlClient()
+
+	var waitgroup sync.WaitGroup
+
 	for i := 1; i < 100; i++ {
-		comic, err := client.Get(rawurl, i)
+		foo := func(num int) {
+			comic, err := client.Get(rawurl, num)
 
-		if err != nil {
-			log.Fatal(err)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Printf("%s: %s\n", comic.Title, comic.ImageURL)
+
+			comic.Download(num)
+			waitgroup.Done()
 		}
+		waitgroup.Add(1)
+		go foo(i)
 
-		fmt.Printf("%s: %s", comic.Title, comic.ImageURL)
-
-		err = comic.Download(i)
-		if err != nil {
-			fmt.Errorf("download %d: %s\n", i, err)
-		}
 	}
+	waitgroup.Wait()
+	fmt.Println("done")
 }
