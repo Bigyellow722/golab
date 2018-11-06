@@ -2,7 +2,9 @@ package comic
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -57,4 +59,23 @@ func (c *Client) doReq(rawurl, path string) (Comic, error) {
 func (c *Client) Get(rawurl string, number int) (Comic, error) {
 	numStr := strconv.Itoa(number)
 	return c.doReq(rawurl, "/"+numStr+"/info.0.json")
+}
+
+func (comic *Comic) Download(number int) error {
+	res, err := http.Get(comic.ImageURL)
+	if err != nil {
+		panic(err)
+
+	}
+	tmp := strconv.Itoa(number)
+	f, err := os.Create(tmp + ".png")
+	if err != nil {
+		panic(err)
+
+	}
+
+	io.Copy(f, res.Body)
+
+	return err
+
 }

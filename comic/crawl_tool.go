@@ -10,11 +10,11 @@ import (
 )
 
 type Config struct {
-	UseHttps bool
+	UseHTTPS bool
 }
 
 type Client struct {
-	HttpClient *http.Client
+	HTTPClient *http.Client
 	Config
 }
 
@@ -22,7 +22,7 @@ func NewCrawlClient() *Client {
 	return &Client{
 		http.DefaultClient,
 		Config{
-			UseHttps: true,
+			UseHTTPS: true,
 		},
 	}
 }
@@ -30,14 +30,14 @@ func NewCrawlClient() *Client {
 func (c *Client) rawURL(arg string) string {
 	protocol := "http://"
 
-	if c.UseHttps {
+	if c.UseHTTPS {
 		protocol = "https://"
 	}
 	return protocol + arg
 }
 
 func (c *Client) do(req *http.Request) (io.ReadCloser, error) {
-	res, err := c.HttpClient.Do(req)
+	res, err := c.HTTPClient.Do(req)
 
 	if err != nil {
 		return nil, err

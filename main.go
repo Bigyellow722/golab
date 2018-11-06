@@ -41,11 +41,18 @@ func main() {
 	*/
 	const rawurl string = "xkcd.com"
 	client := comic.NewCrawlClient()
-	comic, err := client.Get(rawurl, 519)
+	for i := 1; i < 100; i++ {
+		comic, err := client.Get(rawurl, i)
 
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%s: %s", comic.Title, comic.ImageURL)
+
+		err = comic.Download(i)
+		if err != nil {
+			fmt.Errorf("download %d: %s\n", i, err)
+		}
 	}
-
-	fmt.Printf("%s: %s", comic.Title, comic.ImageURL)
 }
