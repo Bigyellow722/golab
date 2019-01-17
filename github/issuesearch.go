@@ -31,9 +31,14 @@ type IssuesSearchResult struct {
 	Items      []*Issue
 }
 
+func sortbytime(createdAt time.Time) {
+
+}
+
 func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	//将terms转义成url中"?q"后面的部分
 	q := url.QueryEscape(strings.Join(terms, " "))
+	fmt.Println(IssuesURL + "?q=" + q)
 	resp, err := http.Get(IssuesURL + "?q=" + q)
 	if err != nil {
 		return nil, err
