@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+var Rawurl string = "xkcd.com"
+
 type Config struct {
 	UseHTTPS bool
 }
